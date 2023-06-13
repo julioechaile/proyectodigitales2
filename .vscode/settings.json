@@ -1,0 +1,12 @@
+{
+    "git.ignoreLimitWarning": true,
+    "idf.espIdfPath": "/home/julioechaile/esp/esp-idf",
+    "idf.toolsPath": "/home/julioechaile/.espressif",
+    "idf.customExtraPaths": "/home/julioechaile/.espressif/tools/xtensa-esp-elf-gdb/11.2_20220823/xtensa-esp-elf-gdb/bin:/home/julioechaile/.espressif/tools/riscv32-esp-elf-gdb/11.2_20220823/riscv32-esp-elf-gdb/bin:/home/julioechaile/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin:/home/julioechaile/.espressif/tools/xtensa-esp32s2-elf/esp-2022r1-11.2.0/xtensa-esp32s2-elf/bin:/home/julioechaile/.espressif/tools/xtensa-esp32s3-elf/esp-2022r1-11.2.0/xtensa-esp32s3-elf/bin:/home/julioechaile/.espressif/tools/riscv32-esp-elf/esp-2022r1-11.2.0/riscv32-esp-elf/bin:/home/julioechaile/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/home/julioechaile/.espressif/tools/openocd-esp32/v0.11.0-esp32-20221026/openocd-esp32/bin:/home/julioechaile/.espressif/tools/esp-rom-elfs/20220823",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "/home/julioechaile/.espressif/tools/openocd-esp32/v0.11.0-esp32-20221026/openocd-esp32/share/openocd/scripts",
+        "ESP_ROM_ELF_DIR": "/home/julioechaile/.espressif/tools/esp-rom-elfs/20220823/"
+    },
+    "idf.gitPath": "git",
+    "idf.adapterTargetName": "esp32"
+}
