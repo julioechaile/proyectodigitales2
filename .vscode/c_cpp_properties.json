@@ -4,14 +4,15 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/julioechaile/esp/esp-idf/**"
+                "/home/julioechaile/esp/esp-idf/**","/home/julioechaile/Descargas/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x64",
-            "compileCommands": "${workspaceFolder}/build/bootloader/compile_commands.json"
+            "compileCommands": "${workspaceFolder}/build/bootloader/compile_commands.json",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
