@@ -9,11 +9,30 @@
 #include <freertos/FreeRTOSConfig_arch.h>
 #include "driver/gpio.h"
 #define sensor_izq GPIO_NUM_15
-#define sensor_der GPIO_NUM_4
+#define sensor_der GPIO_NUM_2
 #define sensor_ret GPIO_NUM_0
 
 TaskHandle_t Handle = NULL;
 
+//creacion de los estados de la maquina de estados
+
+enum button_state      {
+    button_state_up,
+    button_state_fall,
+    button_state_down,
+    button_state_rise,
+};
+
+
+//creacion de la estructura
+
+struct button          
+{
+    enum button_state state;
+    gpio_num_t pin;     //direccion del pin a leer
+};
+
+//creacion de la maquina de estados del robot
 enum estado
 {
     estado_avanzar,
@@ -22,12 +41,7 @@ enum estado
     estado_reversa,
 };
 
-struct entradas
-{
-    int izq;
-    int der;
-    int ret;
-};
+//creacion de la estructura del robot
 
 struct salidas
 {
@@ -36,41 +50,39 @@ struct salidas
     bool mota;
     bool motb;
 };
-struct direcciones
-{
-    int dir_izq;
-    int dir_der;
-    int dir_ret;
-};
+
 struct robot
 {
     enum estado status;
-    struct entradas sensor;
+    struct button sensor_derecha;
+    struct button sensor_izquierda;
+    struct button sensor_retroceso;
     struct salidas motor;
-    struct direcciones add;
 };
 
-void init(struct robot *robot_init) // aca la maquina se llama robot_init
+
+//inicializa todas las variables del robot
+void robot_init(struct robot *robot_init)
 {
     printf("Iniciando robot\n\r");
-
+    //inicializo estado del robot
     robot_init->status = estado_avanzar;
+
+    //inicializo salidas de motores
     robot_init->motor.mot1 = 1;
     robot_init->motor.mot2 = 0;
     robot_init->motor.mota = 1;
     robot_init->motor.motb = 0;
+    
+    //inicializo sensores
+    robot_init->sensor_derecha.state = button_state_up;
+    robot_init ->sensor_derecha.pin = sensor_der; 
+    robot_init->sensor_izquierda.state = button_state_up;
+    robot_init ->sensor_izquierda.pin = sensor_izq; 
+    robot_init->sensor_retroceso.state = button_state_up;
+    robot_init ->sensor_retroceso.pin = sensor_ret; 
 
-    robot_init->sensor.izq = 1;
-    robot_init->sensor.der = 1;
-    robot_init->sensor.ret = 1;
-    printf("sensor izq inicio: %d\n\r", robot_init->sensor.izq);
-    printf("sensor der inicio: %d\n\r", robot_init->sensor.der);
-    printf("sensor ret inicio: %d\n\r", robot_init->sensor.ret);
-
-    // robot_init->add.dir_izq = sensor_izq;
-    // robot_init->add.dir_der = sensor_der;
-    // robot_init->add.dir_ret = sensor_ret;
-
+    //seteo de GPIOs
     gpio_set_direction(sensor_izq, GPIO_MODE_INPUT);
     gpio_set_pull_mode(sensor_izq, GPIO_PULLUP_ONLY);
     gpio_set_direction(sensor_der, GPIO_MODE_INPUT);
@@ -79,28 +91,93 @@ void init(struct robot *robot_init) // aca la maquina se llama robot_init
     gpio_set_pull_mode(sensor_ret, GPIO_PULLUP_ONLY);
 }
 
-void robot_update(struct robot *robot_update) // aca la maquina se llama robot_update
+
+//actualizacion de cada boton (esta funcion se llama tres veces, una vez por cada sensor, izquierda, derecha y retroceso)
+//y devuelve el boton que recibió ya configurado
+struct button button_update (struct button boton_u)  
+{   
+    int read; 
+    read = gpio_get_level(boton_u.pin);  // leer el gpio del pin a la direccion especificada
+    switch(boton_u.state)
+    {
+        case button_state_up:
+            if(read == 0)
+            {
+                boton_u.state = button_state_fall;
+                printf("lectura cayendo\n\r");
+            }
+            printf("lectura arriba\n\r");
+            return boton_u;
+        break;
+
+        case button_state_down:
+            if(read == 1)
+            {
+                boton_u.state = button_state_rise;
+                printf("lectura subiendo\n\r");
+            }
+            return boton_u;
+
+        break;
+
+        case button_state_fall:
+            if(read == 0)
+            {
+                boton_u.state = button_state_down;
+                printf(" lectura abajo\n\r");
+            }
+            else{
+                boton_u.state = button_state_up;
+                printf("lectura arriba\n\r");
+             }
+            return boton_u;
+
+        break;
+
+        case button_state_rise:
+        if(read == 0)
+        {
+            boton_u.state = button_state_down;
+            printf("lectura abajo\n\r");
+        }else {
+            boton_u.state = button_state_up;
+            printf("lectura arriba\n\r");
+        }
+        return boton_u;
+        break;
+
+        default:
+        boton_u.state = button_state_up;
+        printf("lectura arriba_default\n\r");
+        return boton_u;
+        break;
+
+
+    }    
+}
+
+//actualizacion del robot, esta funcion se llama cada un segundo desde el task, para actualizar el robot
+void robot_update(struct robot *robot_update)
 {
     printf("Actualizando robot\n\r");
-    robot_update->sensor.izq = gpio_get_level(sensor_izq); // robot_update->add.dir_izq);
-    robot_update->sensor.der = gpio_get_level(sensor_der); // robot_update->add.dir_der);
-    robot_update->sensor.ret = gpio_get_level(sensor_ret); // robot_update->add.dir_ret);
-    printf("sensor izq: %d\n\r", robot_update->sensor.izq);
-    printf("sensor der: %d\n\r", robot_update->sensor.der);
-    printf("sensor ret: %d\n\r", robot_update->sensor.ret);
+
+    robot_update->sensor_derecha = button_update(robot_update->sensor_derecha);
+    robot_update->sensor_izquierda = button_update(robot_update->sensor_izquierda);
+    robot_update->sensor_retroceso = button_update(robot_update->sensor_retroceso);
+
 
     switch (robot_update->status)
     { // revisa los estados posibles del robot
     case estado_avanzar:
-        if (robot_update->sensor.izq == 0)
+        if (robot_update->sensor_izquierda.state == button_state_down)
         {
             robot_update->status = estado_izquierda;
         }
-        else if (robot_update->sensor.der == 0)
+        else if (robot_update->sensor_derecha.state == button_state_down)
         {
             robot_update->status = estado_derecha;
         }
-        else if (robot_update->sensor.ret == 0)
+        else if (robot_update->sensor_retroceso.state == button_state_down)
         {
             robot_update->status = estado_reversa;
         }
@@ -118,7 +195,7 @@ void robot_update(struct robot *robot_update) // aca la maquina se llama robot_u
         robot_update->motor.motb = 1;
         printf("Giro derecha\n\r");
 
-        if (robot_update->sensor.der == 0)
+        if (robot_update->sensor_derecha.state == button_state_down)
         {
             break;
         }
@@ -135,7 +212,7 @@ void robot_update(struct robot *robot_update) // aca la maquina se llama robot_u
         robot_update->motor.motb = 0;
         printf("Giro izquierda\n\r");
 
-        if (robot_update->sensor.izq == 0)
+        if (robot_update->sensor_izquierda.state == button_state_down)
         {
             break;
         }
@@ -150,7 +227,7 @@ void robot_update(struct robot *robot_update) // aca la maquina se llama robot_u
         robot_update->motor.mota = 0;
         robot_update->motor.motb = 1;
         printf("Retrocediendo\n\r");
-        if (robot_update->sensor.ret == 0)
+        if (robot_update->sensor_retroceso.state == button_state_down)
         {
             break;
         }
@@ -165,13 +242,15 @@ void robot_update(struct robot *robot_update) // aca la maquina se llama robot_u
     }
 }
 
-void TestTask(void *notUsed) // llama a update para actualizar la maq
+//tarea que inicializa  y luego actualiza al robot cada un segundo
+void TestTask(void *notUsed)
 {
     int contador = 0;
-    struct robot maquinas;
+    struct robot robot_task;
+    robot_init(&robot_task); 
     while (1)
     {
-        robot_update(&maquinas);
+        robot_update(&robot_task);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         printf("tick %d\n\r", contador);
         contador++;
@@ -181,10 +260,10 @@ void TestTask(void *notUsed) // llama a update para actualizar la maq
     return;
 }
 
-void TestCreate(void) // llama a init y crea la tarea TestTask
+//creo la tarea de actualizacion "test"
+
+void TestCreate(void) 
 {
-    struct robot maquina;
-    init(&maquina);
-    printf("[TEST] Creating task\n\r");
-    xTaskCreate(TestTask, "test", 4096, NULL, 10, &Handle);
+    printf("[TEST] creando tarea\n\r");
+    xTaskCreate(TestTask, "test", 4096, NULL, 10, &Handle);  // crea TestTask
 }
