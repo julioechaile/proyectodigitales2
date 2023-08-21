@@ -8,7 +8,6 @@
 #include <freertos/FreeRTOSConfig_arch.h>
 #include "lectura.h"
 #include "salida.h"
-#include "salida.c"//prueba
 #include "estructura.h"
 #define sensor_izq GPIO_NUM_15
 #define sensor_der GPIO_NUM_2
