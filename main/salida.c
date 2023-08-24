@@ -3,11 +3,11 @@
 #include <freertos/task.h>
 #include "driver/gpio.h"
 #include "estructura.h"
-#include "salida.h"
+//#include "salida.h"
+void setear_eje(robot_t robot_op);
+extern robot_t *robot_op;
 
-extern robot_t robot_op;
-
-void setear_eje(robot_t *robot_op){
+void setear_eje(robot_t robot_op){
 
     switch (robot_op -> status){
 
@@ -45,7 +45,7 @@ void setear_eje(robot_t *robot_op){
             printf("Retrocediendo\n\r");
             break;
             
-        case default:
+        default:
             robot_op -> motor.mot1 = 1;
             robot_op -> motor.mot2 = 0;
             robot_op -> motor.mota = 1;

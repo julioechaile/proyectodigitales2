@@ -7,18 +7,19 @@
 #include <freertos/task.h>
 #include <freertos/FreeRTOSConfig_arch.h>
 #include "lectura.h"
-#include "salida.h"
+//#include "salida.h"
 #include "estructura.h"
 #define sensor_izq GPIO_NUM_15
 #define sensor_der GPIO_NUM_2
 #define sensor_ret GPIO_NUM_0
+void setear_eje(robot_t robot_op);
 
 TaskHandle_t Handle = NULL;
-robot_t robot_op= NULL;
+robot_t *robot_op= NULL;
 
 
 //inicializa todas las variables del robot
-void robot_init(robot_t *robot_i)
+void robot_init(robot_t robot_i)
 {
     printf("Iniciando robot\n\r");
     //inicializo estado del robot
@@ -49,7 +50,7 @@ void robot_init(robot_t *robot_i)
 
 
 //actualizacion del robot, esta funcion se llama cada un segundo desde el task, para actualizar el robot
-void robot_update(robot_t *robot_u)
+void robot_update(robot_t robot_u)
 {
     printf("Actualizando robot\n\r");
     //llamo tres veces a update, que está en lectura.c
@@ -146,5 +147,5 @@ void TestTask(void *notUsed)
 void TestCreate(void) 
 {
     printf("[TEST] creando tarea\n\r");
-    xTaskCreate(TestTask, "test", 4096, NULL, 10, &Handle);  // crea TestTask
+    xTaskCreate(TestTask, "test", 2048, NULL, 10, &Handle);  // crea TestTask
 }
