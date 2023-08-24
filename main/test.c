@@ -14,29 +14,29 @@
 #define sensor_ret GPIO_NUM_0
 
 TaskHandle_t Handle = NULL;
-
+robot_t robot_op= NULL;
 
 
 //inicializa todas las variables del robot
-void robot_init(robot_t self)
+void robot_init(robot_t *robot_i)
 {
     printf("Iniciando robot\n\r");
     //inicializo estado del robot
-    self->status = estado_avanzar;
+    robot_i->status = estado_avanzar;
 
     //inicializo salidas de motores
-    self->motor.mot1 = 1;
-    self->motor.mot2 = 0;
-    self->motor.mota = 1;
-    self->motor.motb = 0;
+    robot_i ->motor.mot1 = 1;
+    robot_i ->motor.mot2 = 0;
+    robot_i ->motor.mota = 1;
+    robot_i ->motor.motb = 0;
     
     //inicializo sensores
-    self->sensor_derecha.state = button_state_up;
-    self ->sensor_derecha.pin = sensor_der; 
-    self->sensor_izquierda.state = button_state_up;
-    self ->sensor_izquierda.pin = sensor_izq; 
-    self->sensor_retroceso.state = button_state_up;
-    self ->sensor_retroceso.pin = sensor_ret; 
+    robot_i ->sensor_derecha.state = button_state_up;
+    robot_i ->sensor_derecha.pin = sensor_der; 
+    robot_i ->sensor_izquierda.state = button_state_up;
+    robot_i ->sensor_izquierda.pin = sensor_izq; 
+    robot_i ->sensor_retroceso.state = button_state_up;
+    robot_i ->sensor_retroceso.pin = sensor_ret; 
 
     //seteo de GPIOs
     gpio_set_direction(sensor_izq, GPIO_MODE_INPUT);
@@ -49,76 +49,76 @@ void robot_init(robot_t self)
 
 
 //actualizacion del robot, esta funcion se llama cada un segundo desde el task, para actualizar el robot
-void robot_update(robot_t self)
+void robot_update(robot_t *robot_u)
 {
     printf("Actualizando robot\n\r");
     //llamo tres veces a update, que está en lectura.c
-    self->sensor_derecha = button_update(self->sensor_derecha);
-    self->sensor_izquierda = button_update(self->sensor_izquierda);
-    self->sensor_retroceso = button_update(self->sensor_retroceso);
+    robot_u ->sensor_derecha = button_update(robot_u->sensor_derecha);
+    robot_u ->sensor_izquierda = button_update(robot_u->sensor_izquierda);
+    robot_u ->sensor_retroceso = button_update(robot_u->sensor_retroceso);
 
 
-    switch (self->status)
+    switch (robot_u->status)
     { // revisa los estados posibles del robot
     case estado_avanzar:
 
-        if (self->sensor_izquierda.state == button_state_down)
+        if (robot_u->sensor_izquierda.state == button_state_down)
         {
-            self->status = estado_izquierda;
+            robot_u->status = estado_izquierda;
         }
-        else if (self->sensor_derecha.state == button_state_down)
+        else if (robot_u->sensor_derecha.state == button_state_down)
         {
-            self->status = estado_derecha;
+            robot_u->status = estado_derecha;
         }
-        else if (self->sensor_retroceso.state == button_state_down)
+        else if (robot_u->sensor_retroceso.state == button_state_down)
         {
-            self->status = estado_reversa;
+            robot_u->status = estado_reversa;
         }
         //le mando la estructura robot con el estado seteado, para que setee los motores
-        setear_eje(self); 
+        setear_eje(&robot_u); 
 
         break;
     case estado_derecha:
 
-        setear_eje(self);
+        setear_eje(&robot_u);
 
-        if (self->sensor_derecha.state == button_state_down)
+        if (robot_u->sensor_derecha.state == button_state_down)
         {
             break;
         }
         else
         {
-            self->status = estado_avanzar;
+            robot_u->status = estado_avanzar;
         }
         break;
     case estado_izquierda:
 
-        setear_eje(self);
+        setear_eje(&robot_u);
 
-        if (self->sensor_izquierda.state == button_state_down)
+        if (robot_u->sensor_izquierda.state == button_state_down)
         {
             break;
         }
         else
         {
-            self->status = estado_avanzar;
+            robot_u->status = estado_avanzar;
         }
         break;
     case estado_reversa:
 
-        setear_eje(self);
-        if (self->sensor_retroceso.state == button_state_down)
+        setear_eje(&robot_u);
+        if (robot_u->sensor_retroceso.state == button_state_down)
         {
             break;
         }
         else
         {
-            self->status = estado_avanzar;
+            robot_u->status = estado_avanzar;
         }
         break;
     default:
-        self->status = estado_avanzar;
-        setear_eje(self);
+        robot_u->status = estado_avanzar;
+        setear_eje(&robot_u);
         break;
     }
 }
@@ -127,11 +127,11 @@ void robot_update(robot_t self)
 void TestTask(void *notUsed)
 {
     int contador = 0;
-    struct robot robot_task;
-    robot_init(&robot_task); 
+    
+    robot_init(&robot_op); 
     while (1)
     {
-        robot_update(&robot_task);
+        robot_update(&robot_op);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         printf("tick %d\n\r", contador);
         contador++;

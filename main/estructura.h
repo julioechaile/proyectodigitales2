@@ -44,4 +44,3 @@ struct robot
     struct salidas motor;
 };
 typedef struct robot * robot_t;
-robot_t robo_def;
