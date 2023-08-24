@@ -3,8 +3,8 @@
 #include <freertos/task.h>
 #include "driver/gpio.h"
 #include "estructura.h"
-//#include "salida.h"
-void setear_eje(robot_t *robot_op);
+#include "salida.h"
+//void setear_eje(robot_t *robot_op);
 
 void setear_eje(robot_t *robot_op){
 

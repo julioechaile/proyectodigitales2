@@ -6,13 +6,13 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/FreeRTOSConfig_arch.h>
-#include "lectura.h"
-//#include "salida.h"
 #include "estructura.h"
+#include "lectura.h"
+#include "salida.h"
 #define sensor_izq GPIO_NUM_15
 #define sensor_der GPIO_NUM_2
 #define sensor_ret GPIO_NUM_0
-void setear_eje(robot_t *robot_op);
+//void setear_eje(robot_t *robot_op);
 
 TaskHandle_t Handle = NULL;
 
