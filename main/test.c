@@ -12,14 +12,14 @@
 #define sensor_izq GPIO_NUM_15
 #define sensor_der GPIO_NUM_2
 #define sensor_ret GPIO_NUM_0
-void setear_eje(robot_t robot_op);
+void setear_eje(robot_t *robot_op);
 
 TaskHandle_t Handle = NULL;
-robot_t *robot_op= NULL;
+
 
 
 //inicializa todas las variables del robot
-void robot_init(robot_t robot_i)
+void robot_init(robot_t *robot_i)
 {
     printf("Iniciando robot\n\r");
     //inicializo estado del robot
@@ -50,7 +50,7 @@ void robot_init(robot_t robot_i)
 
 
 //actualizacion del robot, esta funcion se llama cada un segundo desde el task, para actualizar el robot
-void robot_update(robot_t robot_u)
+void robot_update(robot_t *robot_u)
 {
     printf("Actualizando robot\n\r");
     //llamo tres veces a update, que está en lectura.c
@@ -76,12 +76,12 @@ void robot_update(robot_t robot_u)
             robot_u->status = estado_reversa;
         }
         //le mando la estructura robot con el estado seteado, para que setee los motores
-        setear_eje(&robot_u); 
+        setear_eje(robot_u); 
 
         break;
     case estado_derecha:
 
-        setear_eje(&robot_u);
+        setear_eje(robot_u);
 
         if (robot_u->sensor_derecha.state == button_state_down)
         {
@@ -94,7 +94,7 @@ void robot_update(robot_t robot_u)
         break;
     case estado_izquierda:
 
-        setear_eje(&robot_u);
+        setear_eje(robot_u);
 
         if (robot_u->sensor_izquierda.state == button_state_down)
         {
@@ -107,7 +107,7 @@ void robot_update(robot_t robot_u)
         break;
     case estado_reversa:
 
-        setear_eje(&robot_u);
+        setear_eje(robot_u);
         if (robot_u->sensor_retroceso.state == button_state_down)
         {
             break;
@@ -119,7 +119,7 @@ void robot_update(robot_t robot_u)
         break;
     default:
         robot_u->status = estado_avanzar;
-        setear_eje(&robot_u);
+        setear_eje(robot_u);
         break;
     }
 }
@@ -128,11 +128,11 @@ void robot_update(robot_t robot_u)
 void TestTask(void *notUsed)
 {
     int contador = 0;
-    
-    robot_init(&robot_op); 
+    robot_t robot_task;
+    robot_init(&robot_task); 
     while (1)
     {
-        robot_update(&robot_op);
+        robot_update(&robot_task);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         printf("tick %d\n\r", contador);
         contador++;

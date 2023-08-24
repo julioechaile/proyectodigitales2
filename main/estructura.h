@@ -43,4 +43,4 @@ struct robot
     struct button sensor_retroceso;
     struct salidas motor;
 };
-typedef struct robot * robot_t;
+typedef struct robot robot_t;
