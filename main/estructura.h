@@ -1,4 +1,7 @@
-//creacion de los estados de la maquina de estados
+#include <stdint.h>
+#include "driver/gpio.h"
+
+//creacion de la maquina de estados del boton
 
 enum button_state      {
     button_state_up,
@@ -8,7 +11,7 @@ enum button_state      {
 };
 
 
-//creacion de la estructura
+//creacion de la estructura del boton
 
 struct button          
 {
@@ -23,16 +26,22 @@ enum estado
     estado_derecha,
     estado_izquierda,
     estado_reversa,
+    estado_detenido,
 };
 
 //creacion de la estructura del robot
 
+struct Motor
+{
+  uint32_t pin_p;
+  uint32_t pin_n;
+  uint32_t duty;
+};
+
 struct salidas
 {
-    int mot1;
-    int mot2;
-    int mota;
-    int motb;
+    struct Motor motA;
+    struct Motor motB;
 };
 
 struct robot

@@ -1,4 +1,3 @@
-#include "test.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -7,45 +6,32 @@
 #include <freertos/task.h>
 #include <freertos/FreeRTOSConfig_arch.h>
 #include "estructura.h"
-#include "lectura.h"
-#include "salida.h"
-#define sensor_izq GPIO_NUM_15
-#define sensor_der GPIO_NUM_2
-#define sensor_ret GPIO_NUM_0
-//void setear_eje(robot_t *robot_op);
+#include "boton.h"
+#include "eje.h"
+#include "robot.h"
+#include "config.h"
+#include "motor.h"
 
 TaskHandle_t Handle = NULL;
-
-
 
 //inicializa todas las variables del robot
 void robot_init(robot_t *robot_i)
 {
     printf("Iniciando robot\n\r");
     //inicializo estado del robot
-    robot_i->status = estado_avanzar;
+    robot_i->status = estado_detenido;
 
     //inicializo salidas de motores
-    robot_i ->motor.mot1 = 1;
-    robot_i ->motor.mot2 = 0;
-    robot_i ->motor.mota = 1;
-    robot_i ->motor.motb = 0;
+    Motor_create(&robot_i->motor.motA, PIN_P_MOTA, PIN_N_MOTA);
+    Motor_create(&robot_i->motor.motb, PIN_P_MOTB, PIN_N_MOTB);
     
     //inicializo sensores
-    robot_i ->sensor_derecha.state = button_state_up;
-    robot_i ->sensor_derecha.pin = sensor_der; 
-    robot_i ->sensor_izquierda.state = button_state_up;
-    robot_i ->sensor_izquierda.pin = sensor_izq; 
-    robot_i ->sensor_retroceso.state = button_state_up;
-    robot_i ->sensor_retroceso.pin = sensor_ret; 
-
-    //seteo de GPIOs
-    gpio_set_direction(sensor_izq, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(sensor_izq, GPIO_PULLUP_ONLY);
-    gpio_set_direction(sensor_der, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(sensor_der, GPIO_PULLUP_ONLY);
-    gpio_set_direction(sensor_ret, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(sensor_ret, GPIO_PULLUP_ONLY);
+    button_config (&robot_i ->sensor_derecha, sensor_der);
+    button_config (&robot_i ->sensor_izquierda, sensor_izq);
+    button_config (&robot_i ->sensor_retroceso, sensor_ret);
+    
+    //inicializo eje
+    Eje_create(/* configuración */);
 }
 
 
@@ -53,10 +39,10 @@ void robot_init(robot_t *robot_i)
 void robot_update(robot_t *robot_u)
 {
     printf("Actualizando robot\n\r");
-    //llamo tres veces a update, que está en lectura.c
-    robot_u ->sensor_derecha = button_update(robot_u->sensor_derecha);
-    robot_u ->sensor_izquierda = button_update(robot_u->sensor_izquierda);
-    robot_u ->sensor_retroceso = button_update(robot_u->sensor_retroceso);
+    //llamo tres veces a update, que está en boton.c
+    button_update(&robot_u->sensor_derecha);
+    button_update(&robot_u->sensor_izquierda);
+    button_update(&robot_u->sensor_retroceso);
 
 
     switch (robot_u->status)
@@ -76,12 +62,12 @@ void robot_update(robot_t *robot_u)
             robot_u->status = estado_reversa;
         }
         //le mando la estructura robot con el estado seteado, para que setee los motores
-        setear_eje(robot_u); 
+        Eje_set(robot_u); 
 
         break;
     case estado_derecha:
 
-        setear_eje(robot_u);
+        Eje_set(robot_u);
 
         if (robot_u->sensor_derecha.state == button_state_down)
         {
@@ -94,7 +80,7 @@ void robot_update(robot_t *robot_u)
         break;
     case estado_izquierda:
 
-        setear_eje(robot_u);
+        Eje_set(robot_u);
 
         if (robot_u->sensor_izquierda.state == button_state_down)
         {
@@ -107,7 +93,7 @@ void robot_update(robot_t *robot_u)
         break;
     case estado_reversa:
 
-        setear_eje(robot_u);
+        Eje_set(robot_u);
         if (robot_u->sensor_retroceso.state == button_state_down)
         {
             break;
@@ -119,17 +105,17 @@ void robot_update(robot_t *robot_u)
         break;
     default:
         robot_u->status = estado_avanzar;
-        setear_eje(robot_u);
+        Eje_set(robot_u);
         break;
     }
 }
 
 //tarea que inicializa  y luego actualiza al robot cada un segundo
-void TestTask(void *notUsed)
+void RobotTask(void *notUsed)
 {
     int contador = 0;
     robot_t robot_task;
-    robot_init(&robot_task); 
+    robot_init(&robot_task);  //desde acá, el puntero que apunta a robot_task pasa a robot_int 
     while (1)
     {
         robot_update(&robot_task);
@@ -146,6 +132,6 @@ void TestTask(void *notUsed)
 
 void TestCreate(void) 
 {
-    printf("[TEST] creando tarea\n\r");
-    xTaskCreate(TestTask, "test", 2048, NULL, 10, &Handle);  // crea TestTask
+    printf("creando tarea\n\r");
+    xTaskCreate(RobotTask, "robot", 2048, NULL, 10, &Handle);  // crea TestTask
 }

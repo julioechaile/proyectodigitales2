@@ -3,19 +3,18 @@
 #include <freertos/task.h>
 #include "driver/gpio.h"
 #include "estructura.h"
-#include "salida.h"
-//void setear_eje(robot_t *robot_op);
+#include "eje.h"
 
-void setear_eje(robot_t *robot_op){
+void Eje_set(robot_t *robot_e){
 
-    switch (robot_op->status){
+switch(robot_e->status){
 
         case estado_avanzar:
-              
-            robot_op->motor.mot1 = 1;
-            robot_op->motor.mot2 = 0;
-            robot_op->motor.mota = 1;
-            robot_op->motor.motb = 0;
+           //deberia llamar a esta funcion: Motor_set(struct Motor * motor, enum Motor_direction direction, uint32_t duty);  
+           // robot_op->motor.mot1 = 1;   NO
+           // robot_op->motor.mot2 = 0;   NO
+           // robot_op->motor.mota = 1;   NO
+           // robot_op->motor.motb = 0;   NO
             printf("Avanzando\n\r");
             break;
 
@@ -52,4 +51,6 @@ void setear_eje(robot_t *robot_op){
             printf("Avanzando\n\r");
             break;   
     }
+
+
 }
