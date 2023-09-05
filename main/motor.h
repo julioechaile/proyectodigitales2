@@ -15,7 +15,7 @@ enum Motor_direction
   Motor_direction_counterClockwise
 };
 
-struct Motor * Motor_create(struct Motor *motor, uint32_t pin_p, uint32_t pin_n);
+struct Motor * Motor_config(struct Motor *motor, uint32_t pin_p, uint32_t pin_n);
 
 void Motor_set(struct Motor * motor, enum Motor_direction direction, uint32_t duty);
 
