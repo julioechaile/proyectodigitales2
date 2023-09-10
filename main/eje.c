@@ -6,61 +6,74 @@
 #include "eje.h"
 #include "motor.h"
 
-void Eje_config(robot_t * robot_e){
+//Eje_config inicializa el eje y crea los objetos motor
+void Eje_config(void){
 
-Motor_config(robot_e->motor.motA, PIN_P_MOTA, PIN_N_MOTA);
-Motor_config(robot_e->motor.motb, PIN_P_MOTB, PIN_N_MOTB);
+    //creo la primer estructura de configuracion
+    //no es un puntero
+    struct motor_config Motor1_config;
+    Motor1_config.pin_p = PIN_P_MOTA;
+    Motor1_config.pin_n = PIN_N_MOTA;
+    Motor1_config.duty = 0;
+
+    //creo la segunda
+    //no es un puntero
+    struct motor_config Motor2_config;
+    Motor2_config.pin_p = PIN_P_MOTB;
+    Motor2_config.pin_n = PIN_N_MOTB;
+    Motor2_config.duty;
+
+    //creo los punteros que van a recibir lo apuntado por los objetos ya configurados
+    //estos si son punteros
+    Motor_t Motor_L;
+    Motor_t Motor_R;
+
+    Motor_L = mcpwm_gpio_initialize(&Motor1_config);
+    Motor_R = mcpwm_gpio_initialize(&Motor2_config);
 
 }
+//se implementará a futuro con puntero opaco...
 void Eje_set(robot_t *robot_e){
 
-switch(robot_e->status){
+    switch(robot_e->status){
 
         case estado_avanzar:
-           //deberia llamar a esta funcion: 
-           //Motor_set(struct Motor * motor, enum Motor_direction direction, uint32_t duty);  
-           //falta ver PWM en esp32...
-
-           // robot_op->motor.mot1 = 1;   NO
-           // robot_op->motor.mot2 = 0;   NO
-           // robot_op->motor.mota = 1;   NO
-           // robot_op->motor.motb = 0;   NO
+            
             printf("Avanzando\n\r");
+
+            //tengo que mandarle el puntero para que sepa que motor es
+            brushed_motor_forward(Motor_L, MCPWM_UNIT_0, MCPWM_TIMER_0, 80.0);
+            brushed_motor_forward(Motor_R, MCPWM_UNIT_0, MCPWM_TIMER_1, 80.0);
             break;
 
         case estado_derecha:
-            //robot_op->motor.mot1 = 1;
-            //robot_op->motor.mot2 = 0;
-            //robot_op->motor.mota = 0;
-            //robot_op->motor.motb = 1;
+            brushed_motor_forward(Motor_L, MCPWM_UNIT_0, MCPWM_TIMER_0, 80.0);
+            brushed_motor_backward(Motor_R, MCPWM_UNIT_0, MCPWM_TIMER_1, 80.0);
             printf("Giro derecha\n\r");   
             break;
 
         case estado_izquierda:
-
-            //robot_op -> motor.mot1 = 0;
-            //robot_op -> motor.mot2 = 1;
-            //robot_op -> motor.mota = 1;
-            //robot_op -> motor.motb = 0;
+            brushed_motor_backward(Motor_L, MCPWM_UNIT_0, MCPWM_TIMER_0, 80.0);
+            brushed_motor_forward(Motor_R, MCPWM_UNIT_0, MCPWM_TIMER_1, 80.0);
             printf("Giro izquierda\n\r");
             break;
 
         case estado_reversa:
-            //robot_op -> motor.mot1 = 0;
-            //robot_op -> motor.mot2 = 1;
-            //robot_op -> motor.mota = 0;
-            //robot_op -> motor.motb = 1;
-            //printf("Retrocediendo\n\r");
+            brushed_motor_backward(Motor_L, MCPWM_UNIT_0, MCPWM_TIMER_0, 60.0);
+            brushed_motor_backward(Motor_R, MCPWM_UNIT_0, MCPWM_TIMER_1, 60.0);
+            printf("Retrocediendo\n\r");
+            break;
+            
+        case estado_detenido:
+            brushed_motor_stop(Motor_L, MCPWM_UNIT_0, MCPWM_TIMER_0);
+            brushed_motor_stop(Motor_R, MCPWM_UNIT_0, MCPWM_TIMER_1);
             break;
             
         default:
-            robot_op -> motor.mot1 = 1;
-            robot_op -> motor.mot2 = 0;
-            robot_op -> motor.mota = 1;
-            robot_op -> motor.motb = 0;
+            brushed_motor_forward(Motor_L, MCPWM_UNIT_0, MCPWM_TIMER_0, 80.0);
+            brushed_motor_forward(Motor_R, MCPWM_UNIT_0, MCPWM_TIMER_1, 80.0);
             printf("Avanzando\n\r");
-            break;   
+       
     }
-
 
 }

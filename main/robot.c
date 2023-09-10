@@ -27,8 +27,8 @@ void robot_init(robot_t *robot_i)
     button_config (robot_i ->sensor_izquierda, sensor_izq);
     button_config (robot_i ->sensor_retroceso, sensor_ret);
     
-    //inicializo eje
-    Eje_config(robot_i);
+    //inicializo eje y los dos motores
+    Eje_config();
 }
 
 
@@ -42,8 +42,10 @@ void robot_update(robot_t *robot_u)
     button_update(robot_u->sensor_retroceso);
 
 
-    switch (robot_u->status)
-    { // revisa los estados posibles del robot
+    switch (robot_u->status){
+      // revisa los estados posibles del robot
+      // lo que se fija aca es el estado  de los botones
+      // que fue preguntado por button_update para cada sensor
     case estado_avanzar:
 
         if (robot_u->sensor_izquierda.state == button_state_down)
@@ -125,7 +127,7 @@ void RobotTask(void *notUsed)
     return;
 }
 
-//creo la tarea de actualizacion "test"
+//creo la tarea de actualizacion "Robot"
 
 void TestCreate(void) 
 {

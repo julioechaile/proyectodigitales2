@@ -7,7 +7,7 @@ struct Eje
   struct Motor * estribor;
 };
 
-void Eje_config(robot_t * robot_e);
+void Eje_config(void);
 void Eje_set(robot_t * robot_e);
 
 #endif // EJE_H

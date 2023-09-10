@@ -6,6 +6,10 @@
 #include "estructura.h" 
 
 //configura cada boton
+//esta funcion recibe un puntero a sensor, segun clual sea.
+//asigna los pines recibidos y devuelve la configuracion
+
+//se implementará a futuro con puntero  opaco
 void button_config (struct button *boton_u, gpio_num_t pin){
     boton_u->state = button_state_up; //estado inicial UP
     boton_u->pin = pin;               //el pin usado es
@@ -71,8 +75,8 @@ void button_update (struct button *boton_u)
         break;
 
         default:
-        boton_u->state = button_state_up;
-        printf("lectura arriba_default\n\r");
+            boton_u->state = button_state_up;
+            printf("lectura arriba_default\n\r");
 
 
     }    

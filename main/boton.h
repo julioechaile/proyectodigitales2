@@ -21,6 +21,7 @@ struct button
 //prototipo de la funcion update
 void button_update (struct button *boton_u);
 
+//prototipo de funcion configuracion
 void button_config (struct button *boton_u, gpio_num_t pin);
 
 #endif
