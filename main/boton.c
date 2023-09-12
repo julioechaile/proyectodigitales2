@@ -2,9 +2,9 @@
 #include "driver/gpio.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include "boton.h"
-#include "estructura.h" 
 
+#include "estructura.h" 
+#include "boton.h"
 //configura cada boton
 //esta funcion recibe un puntero a sensor, segun clual sea.
 //asigna los pines recibidos y devuelve la configuracion

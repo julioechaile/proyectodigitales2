@@ -8,11 +8,11 @@
 #include "estructura.h"
 #include "boton.h"
 #include "eje.h"
-#include "robot.h"
+
 #include "config.h"
 #include "motor.h"
 #include <stdint.h>
-
+#include "robot.h"
 TaskHandle_t Handle = NULL;
 
 //inicializa todas las variables del robot
@@ -23,9 +23,9 @@ void robot_init(robot_t *robot_i)
     robot_i->status = estado_detenido;
     
     //inicializo sensores
-    button_config (robot_i ->sensor_derecha, sensor_der);
-    button_config (robot_i ->sensor_izquierda, sensor_izq);
-    button_config (robot_i ->sensor_retroceso, sensor_ret);
+    button_config (&robot_i ->sensor_derecha, sensor_der);
+    button_config (&robot_i ->sensor_izquierda, sensor_izq);
+    button_config (&robot_i ->sensor_retroceso, sensor_ret);
     
     //inicializo eje y los dos motores
     Eje_config();
@@ -37,9 +37,9 @@ void robot_update(robot_t *robot_u)
 {
     printf("Actualizando robot\n\r");
     //llamo tres veces a update, que está en boton.c
-    button_update(robot_u->sensor_derecha);
-    button_update(robot_u->sensor_izquierda);
-    button_update(robot_u->sensor_retroceso);
+    button_update(&robot_u->sensor_derecha);
+    button_update(&robot_u->sensor_izquierda);
+    button_update(&robot_u->sensor_retroceso);
 
 
     switch (robot_u->status){

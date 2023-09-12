@@ -2,7 +2,7 @@
 #define LECTURA
 //creacion de los estados de la maquina de estados
 
-enum button_state      {
+/*enum button_state      {
     button_state_up,
     button_state_fall,
     button_state_down,
@@ -16,7 +16,7 @@ struct button
 {
     enum button_state state;
     gpio_num_t pin;     //direccion del pin a leer
-};
+};*/
 
 //prototipo de la funcion update
 void button_update (struct button *boton_u);
