@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -5,14 +6,15 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/FreeRTOSConfig_arch.h>
-#include "estructura.h"
+//#include "estructura.h"
+#include "robot.h"
 #include "boton.h"
 #include "eje.h"
 
 #include "config.h"
 #include "motor.h"
-#include <stdint.h>
-#include "robot.h"
+
+
 TaskHandle_t Handle = NULL;
 
 //inicializa todas las variables del robot

@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "estructura.h": "c"
+        "estructura.h": "c",
+        "esp_log.h": "c",
+        "pulse_cnt.h": "c",
+        "freertos.h": "c"
     }
 }

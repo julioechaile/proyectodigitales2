@@ -1,5 +1,6 @@
 #ifndef __TEST_H__
 #define __TEST_H__
+#include "estructura.h"
 
 void TestCreate(void);
 void robot_init(robot_t *robot_i);
