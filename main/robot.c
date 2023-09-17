@@ -6,9 +6,9 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/FreeRTOSConfig_arch.h>
-//#include "estructura.h"
-#include "robot.h"
 #include "boton.h"
+#include "robot.h"
+
 #include "eje.h"
 
 #include "config.h"
@@ -16,6 +16,8 @@
 
 
 TaskHandle_t Handle = NULL;
+
+struct Eje * Eje_cfg;
 
 //inicializa todas las variables del robot
 void robot_init(robot_t *robot_i)
@@ -25,12 +27,12 @@ void robot_init(robot_t *robot_i)
     robot_i->status = estado_detenido;
     
     //inicializo sensores
-    button_config (&robot_i ->sensor_derecha, sensor_der);
-    button_config (&robot_i ->sensor_izquierda, sensor_izq);
-    button_config (&robot_i ->sensor_retroceso, sensor_ret);
+    robot_i->sensor_derecha = button_config(sensor_der);
+    robot_i->sensor_izquierda = button_config(sensor_izq);
+    robot_i->sensor_retroceso = button_config(sensor_ret);
     
-    //inicializo eje y los dos motores
-    Eje_config();
+    //inicializo eje y devuelvo un puntero con el handle de los dos motores
+    Eje_cfg = Crear_eje();
 }
 
 
@@ -39,9 +41,9 @@ void robot_update(robot_t *robot_u)
 {
     printf("Actualizando robot\n\r");
     //llamo tres veces a update, que está en boton.c
-    button_update(&robot_u->sensor_derecha);
-    button_update(&robot_u->sensor_izquierda);
-    button_update(&robot_u->sensor_retroceso);
+    button_update(robot_u->sensor_derecha);
+    button_update(robot_u->sensor_izquierda);
+    button_update(robot_u->sensor_retroceso);
 
 
     switch (robot_u->status){
@@ -50,27 +52,27 @@ void robot_update(robot_t *robot_u)
       // que fue preguntado por button_update para cada sensor
     case estado_avanzar:
 
-        if (robot_u->sensor_izquierda.state == button_state_down)
+        if (robot_u->sensor_izquierda->state == button_state_down)
         {
             robot_u->status = estado_izquierda;
         }
-        else if (robot_u->sensor_derecha.state == button_state_down)
+        else if (robot_u->sensor_derecha->state == button_state_down)
         {
             robot_u->status = estado_derecha;
         }
-        else if (robot_u->sensor_retroceso.state == button_state_down)
+        else if (robot_u->sensor_retroceso->state == button_state_down)
         {
             robot_u->status = estado_reversa;
         }
         //le mando la estructura robot con el estado seteado, para que setee los motores
-        Eje_set(robot_u); 
+        Eje_set(robot_u->status, Eje_cfg); 
 
         break;
     case estado_derecha:
 
-        Eje_set(robot_u);
+        Eje_set(robot_u->status, Eje_cfg);
 
-        if (robot_u->sensor_derecha.state == button_state_down)
+        if (robot_u->sensor_derecha->state == button_state_down)
         {
             break;
         }
@@ -81,9 +83,9 @@ void robot_update(robot_t *robot_u)
         break;
     case estado_izquierda:
 
-        Eje_set(robot_u);
+        Eje_set(robot_u->status, Eje_cfg);
 
-        if (robot_u->sensor_izquierda.state == button_state_down)
+        if (robot_u->sensor_izquierda->state == button_state_down)
         {
             break;
         }
@@ -94,8 +96,8 @@ void robot_update(robot_t *robot_u)
         break;
     case estado_reversa:
 
-        Eje_set(robot_u);
-        if (robot_u->sensor_retroceso.state == button_state_down)
+        Eje_set(robot_u->status, Eje_cfg);
+        if (robot_u->sensor_retroceso->state == button_state_down)
         {
             break;
         }
@@ -106,7 +108,7 @@ void robot_update(robot_t *robot_u)
         break;
     default:
         robot_u->status = estado_avanzar;
-        Eje_set(robot_u);
+        Eje_set(robot_u->status, Eje_cfg);
         break;
     }
 }

@@ -5,20 +5,33 @@
 
 #include "estructura.h" 
 #include "boton.h"
+#include "config.h"
 //configura cada boton
 //esta funcion recibe un puntero a sensor, segun clual sea.
 //asigna los pines recibidos y devuelve la configuracion
 
 //se implementará a futuro con puntero  opaco
-void button_config (struct button *boton_u, gpio_num_t pin){
-    boton_u->state = button_state_up; //estado inicial UP
-    boton_u->pin = pin;               //el pin usado es
+
+u_int32_t sensores_creados = 0;
+
+struct button * button_cfg;
+
+//funcion que crea un boton y devuelve un puntero a boton
+
+struct button * button_config (gpio_num_t pin){
+    if(sensores_creados < Sensores_maximos){
+    button_cfg->state = button_state_up; //estado inicial UP
+    button_cfg->pin = pin;               //el pin usado es
     //seteo de GPIOs
     gpio_set_direction(pin, GPIO_MODE_INPUT);
     gpio_set_pull_mode(pin, GPIO_PULLUP_ONLY);
 
-}
+    sensores_creados++;
+    return button_cfg;
+    }
+    return 0;
 
+}
 
 //actualizacion de cada boton (esta funcion se llama tres veces, una vez por cada sensor, izquierda, derecha y retroceso)
 //y devuelve el boton que recibió ya configurado
