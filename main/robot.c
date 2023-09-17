@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include "driver/gpio.h"
 #include <freertos/FreeRTOS.h>
@@ -17,7 +16,7 @@
 
 TaskHandle_t Handle = NULL;
 
-struct Eje * Eje_cfg;
+static Eje_t Eje_cfg;
 
 //inicializa todas las variables del robot
 void robot_init(robot_t *robot_i)
@@ -41,9 +40,9 @@ void robot_update(robot_t *robot_u)
 {
     printf("Actualizando robot\n\r");
     //llamo tres veces a update, que está en boton.c
-    button_update(robot_u->sensor_derecha);
-    button_update(robot_u->sensor_izquierda);
-    button_update(robot_u->sensor_retroceso);
+    enum button_state Status_sensor_L = button_update(robot_u->sensor_derecha);
+    enum button_state Status_sensor_R = button_update(robot_u->sensor_izquierda);
+    enum button_state Status_sensor_RR = button_update(robot_u->sensor_retroceso);
 
 
     switch (robot_u->status){
@@ -52,15 +51,15 @@ void robot_update(robot_t *robot_u)
       // que fue preguntado por button_update para cada sensor
     case estado_avanzar:
 
-        if (robot_u->sensor_izquierda->state == button_state_down)
+        if (Status_sensor_L == button_state_down)
         {
             robot_u->status = estado_izquierda;
         }
-        else if (robot_u->sensor_derecha->state == button_state_down)
+        else if (Status_sensor_R == button_state_down)
         {
             robot_u->status = estado_derecha;
         }
-        else if (robot_u->sensor_retroceso->state == button_state_down)
+        else if (Status_sensor_RR == button_state_down)
         {
             robot_u->status = estado_reversa;
         }
@@ -72,7 +71,7 @@ void robot_update(robot_t *robot_u)
 
         Eje_set(robot_u->status, Eje_cfg);
 
-        if (robot_u->sensor_derecha->state == button_state_down)
+        if (Status_sensor_R == button_state_down)
         {
             break;
         }
@@ -85,7 +84,7 @@ void robot_update(robot_t *robot_u)
 
         Eje_set(robot_u->status, Eje_cfg);
 
-        if (robot_u->sensor_izquierda->state == button_state_down)
+        if (Status_sensor_L == button_state_down)
         {
             break;
         }
@@ -97,7 +96,7 @@ void robot_update(robot_t *robot_u)
     case estado_reversa:
 
         Eje_set(robot_u->status, Eje_cfg);
-        if (robot_u->sensor_retroceso->state == button_state_down)
+        if (Status_sensor_RR == button_state_down)
         {
             break;
         }

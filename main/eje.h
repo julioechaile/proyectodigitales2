@@ -1,11 +1,14 @@
 #ifndef EJE_H
 #define EJE_H
 #include "motor.h"
+
 struct Eje
 {
   bdc_motor_handle_t Motor_L;
   bdc_motor_handle_t Motor_R;
 };
+
+
 
 enum estado
 {
@@ -15,9 +18,10 @@ enum estado
     estado_reversa,
     estado_detenido,
 };
+typedef struct Eje_c * Eje_t;
 
 //inicializa los motores y entrega un puntero a una estructura que tiene los handles de los motores
-struct Eje * Crear_eje(void);
-void Eje_set(enum estado estado_robot, struct Eje * Eje_cfg);
+Eje_t Crear_eje(void);
+void Eje_set(enum estado estado_robot, Eje_t Eje_cfg);
 
 #endif // EJE_H

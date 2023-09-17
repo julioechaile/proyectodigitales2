@@ -12,17 +12,12 @@ enum button_state      {
 
 //creacion de la estructura del boton
 
-struct button          
-{
-    enum button_state state;
-    gpio_num_t pin;     //direccion del pin a leer
-};
-
+typedef struct Boton * Boton_t;
 
 //prototipo de la funcion update
-void button_update (struct button *boton_u);
+enum button_state button_update (Boton_t boton_u);
 
 //prototipo de funcion configuracion
- struct button * button_config (gpio_num_t pin);
+Boton_t button_config (gpio_num_t pin);
 
 #endif

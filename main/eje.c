@@ -31,17 +31,19 @@ necesito una estructura de entrada (puede ser un enum)
 
 static const char *TAG = "eje";
 
-/*eje.c recibe los estados del robot y crea dos motores.
-luego comanda esos motores segun la accion que se necesite*/
-
-/*variables globales*/
 
 bdc_motor_handle_t motor;
 
-struct Eje * Eje_config;
+struct Eje_c
+{
+  bdc_motor_handle_t Motor_L;
+  bdc_motor_handle_t Motor_R;
+};
+
+static struct Eje_c * Eje_config;
 
 //por ahora crea los motores de forma secuencial
-struct Eje * Crear_eje(void){
+Eje_t Crear_eje(void){
 
     //creacion del motor_L
     ESP_LOGI(TAG, "Create DC motor_L");
@@ -87,8 +89,7 @@ struct Eje * Crear_eje(void){
     return Eje_config;
 }
 
-//se implementará a futuro con puntero opaco...
-void Eje_set(enum estado estado_robot, struct Eje * Eje_cfg){
+void Eje_set(enum estado estado_robot, Eje_t Eje_cfg){
 
     switch(estado_robot){
 

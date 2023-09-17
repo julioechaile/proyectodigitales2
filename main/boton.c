@@ -10,24 +10,27 @@
 //esta funcion recibe un puntero a sensor, segun clual sea.
 //asigna los pines recibidos y devuelve la configuracion
 
-//se implementará a futuro con puntero  opaco
+struct Boton          
+{
+    enum button_state state;
+    gpio_num_t pin;     //direccion del pin a leer
+};
 
-u_int32_t sensores_creados = 0;
+static int sensores_creados = 0;
 
-struct button * button_cfg;
+static struct Boton boton_pool[Sensores_maximos];
 
 //funcion que crea un boton y devuelve un puntero a boton
 
-struct button * button_config (gpio_num_t pin){
+Boton_t button_config (gpio_num_t pin){
     if(sensores_creados < Sensores_maximos){
-    button_cfg->state = button_state_up; //estado inicial UP
-    button_cfg->pin = pin;               //el pin usado es
+    boton_pool[sensores_creados].state = button_state_up; //estado inicial UP
+    boton_pool[sensores_creados].pin = pin;               //el pin usado es
     //seteo de GPIOs
     gpio_set_direction(pin, GPIO_MODE_INPUT);
     gpio_set_pull_mode(pin, GPIO_PULLUP_ONLY);
 
-    sensores_creados++;
-    return button_cfg;
+    return &boton_pool[sensores_creados++];
     }
     return 0;
 
@@ -36,7 +39,7 @@ struct button * button_config (gpio_num_t pin){
 //actualizacion de cada boton (esta funcion se llama tres veces, una vez por cada sensor, izquierda, derecha y retroceso)
 //y devuelve el boton que recibió ya configurado
 
-void button_update (struct button *boton_u)  
+enum button_state button_update (Boton_t boton_u)  
 {   
     int read; 
     read = gpio_get_level(boton_u->pin);  // leer el gpio del pin a la direccion especificada
@@ -92,5 +95,6 @@ void button_update (struct button *boton_u)
             printf("lectura arriba_default\n\r");
 
 
-    }    
+    }
+    return boton_u->state;
 }

@@ -40,9 +40,9 @@ estructura de datos:
 struct robot
 {
     enum estado status;
-    struct button * sensor_derecha;
-    struct button * sensor_izquierda;
-    struct button * sensor_retroceso;
+    Boton_t sensor_derecha;
+    Boton_t sensor_izquierda;
+    Boton_t sensor_retroceso;
 };
 typedef struct robot robot_t;
 #endif
