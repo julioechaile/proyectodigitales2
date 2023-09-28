@@ -4,6 +4,8 @@
         "esp_log.h": "c",
         "pulse_cnt.h": "c",
         "freertos.h": "c",
-        "config.h": "c"
+        "config.h": "c",
+        "bdc_motor.h": "c",
+        "gpio.h": "c"
     }
 }

@@ -7,12 +7,8 @@
 #include <freertos/FreeRTOSConfig_arch.h>
 #include "boton.h"
 #include "robot.h"
-
 #include "eje.h"
-
 #include "config.h"
-#include "motor.h"
-
 
 TaskHandle_t Handle = NULL;
 

@@ -14,10 +14,12 @@ enum button_state      {
 
 typedef struct Boton * Boton_t;
 
+//prototipo de funcion configuracion
+Boton_t button_config (gpio_num_t pin);
+
 //prototipo de la funcion update
 enum button_state button_update (Boton_t boton_u);
 
-//prototipo de funcion configuracion
-Boton_t button_config (gpio_num_t pin);
+
 
 #endif
