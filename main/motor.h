@@ -3,4 +3,6 @@
 #include <stdint.h>
 #include "bdc_motor.h"
 
-bdc_motor_handle_t Crear_motor (gpio_num_t pin_p, gpio_num_t pin_n);
+typedef bdc_motor_handle_t motor_t;
+
+motor_t Crear_motor (u_int32_t pin_p, u_int32_t pin_n);

@@ -4,6 +4,7 @@
 #include "driver/gpio.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include "freertos/queue.h"
 #include <freertos/FreeRTOSConfig_arch.h>
 #include "boton.h"
 #include "robot.h"
@@ -131,5 +132,7 @@ void RobotTask(void *notUsed)
 void TestCreate(void) 
 {
     printf("creando tarea\n\r");
-    xTaskCreate(RobotTask, "robot", 2048, NULL, 10, &Handle);  // crea TestTask
+    xTaskCreatePinnedToCore(RobotTask, "Robot", 4096, NULL,10, &Handle, 1);
+
+    //xTaskCreate(RobotTask, "robot", 4096, NULL, 9, &Handle);  // crea TestTask
 }

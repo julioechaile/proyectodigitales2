@@ -9,23 +9,23 @@ Recibir un estado de la logica de negocio (setear_eje) y actuar sobre los motore
 necesito una estructura de entrada (puede ser un enum)
 */
 #include <stdio.h>
-#include "driver/gpio.h"
 #include "estructura.h"
 #include "config.h"
 #include "esp_attr.h"
 
 #include "sdkconfig.h"
 #include "esp_log.h"
-#include "bdc_motor.h"
-#include "motor.h"
 #include "eje.h"
+#include "motor.h"
+#include "bdc_motor.h"
+
 
 static const char *TAG = "eje";
 
 struct Eje_c
 {
-    bdc_motor_handle_t Motor_L;
-    bdc_motor_handle_t Motor_R;
+    motor_t Motor_L;
+    motor_t Motor_R;
 };
 
 static struct Eje_c *Eje_config;
@@ -36,6 +36,7 @@ Eje_t Crear_eje(void)
 {
     // creacion del motor_L
     Eje_config->Motor_L = Crear_motor(PIN_P_MOTA, PIN_N_MOTA);
+    ESP_LOGI(TAG, "llego aca?");
     Eje_config->Motor_R = Crear_motor(PIN_P_MOTB, PIN_N_MOTB);
     // ya tengo los dos motores creados y configurados
     return Eje_config;

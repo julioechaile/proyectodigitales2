@@ -28,7 +28,7 @@ Boton_t button_config(gpio_num_t pin)
         // seteo de GPIOs
         gpio_set_direction(pin, GPIO_MODE_INPUT);
         gpio_set_pull_mode(pin, GPIO_PULLUP_ONLY);
-
+        printf("sensor iniciado\n\r");
         return &boton_pool[sensores_creados++];
     }
     return 0;
