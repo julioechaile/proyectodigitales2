@@ -40,16 +40,6 @@ motor_t Crear_motor(u_int32_t pin_p, u_int32_t pin_n)
 
         mcpwm_config[motores_configurados].group_id = 0;
         mcpwm_config[motores_configurados].resolution_hz = BDC_MCPWM_TIMER_RESOLUTION_HZ;
-        /*motor_config [motores_configurados] = {
-            .pwm_freq_hz = BDC_MCPWM_FREQ_HZ,
-            .pwma_gpio_num = pin_p,
-            .pwmb_gpio_num = pin_n,
-        };
-
-        mcpwm_config [motores_configurados]= {
-            .group_id = 0,
-            .resolution_hz = BDC_MCPWM_TIMER_RESOLUTION_HZ,
-        };*/
 
         printf("pin de motor A:%ld\n\r", motor_config[motores_configurados].pwma_gpio_num);
         printf("pin de motor B:%ld\n\r", motor_config[motores_configurados].pwmb_gpio_num);
@@ -64,5 +54,5 @@ motor_t Crear_motor(u_int32_t pin_p, u_int32_t pin_n)
         return motor_pool[motores_configurados++];
     }
     else
-        return 0;
+        return NULL;
 }

@@ -7,6 +7,10 @@ Inicializarse (crear_eje)
 Recibir un estado de la logica de negocio (setear_eje) y actuar sobre los motores (motor_F,_R,B)
 
 necesito una estructura de entrada (puede ser un enum)
+
+!!falta encapsular las funciones de la API!!
+
+
 */
 #include <stdio.h>
 #include "estructura.h"
@@ -19,7 +23,6 @@ necesito una estructura de entrada (puede ser un enum)
 #include "motor.h"
 #include "bdc_motor.h"
 
-
 static const char *TAG = "eje";
 
 struct Eje_c
@@ -28,18 +31,31 @@ struct Eje_c
     motor_t Motor_R;
 };
 
-static struct Eje_c *Eje_config;
+static struct Eje_c Eje_config;
+
+static motor_t Motor_PL;
+static motor_t Motor_PR;
 
 // llama a crear motor y recibe un struct Eje_t
 Eje_t Crear_eje(void)
-
 {
+    // Eje_config->Motor_L = NULL;
+    // Eje_config->Motor_R = NULL;
+
     // creacion del motor_L
-    Eje_config->Motor_L = Crear_motor(PIN_P_MOTA, PIN_N_MOTA);
+    // Eje_config->Motor_L = Crear_motor(PIN_P_MOTA, PIN_N_MOTA);
+
+    Motor_PL = Crear_motor(PIN_P_MOTA, PIN_N_MOTA);
     ESP_LOGI(TAG, "llego aca?");
-    Eje_config->Motor_R = Crear_motor(PIN_P_MOTB, PIN_N_MOTB);
+
+    // creacion del motor_R
+    // Eje_config->Motor_R = Crear_motor(PIN_P_MOTB, PIN_N_MOTB);
+    Motor_PR = Crear_motor(PIN_P_MOTB, PIN_N_MOTB);
     // ya tengo los dos motores creados y configurados
-    return Eje_config;
+
+    Eje_config.Motor_L = Motor_PL;
+    Eje_config.Motor_R = Motor_PR;
+    return &Eje_config;
 }
 
 void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
@@ -53,7 +69,7 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
         printf("Avanzando\n\r");
 
         // tengo que mandarle el puntero para que sepa que motor es
-        ESP_LOGI(TAG, "Forward motor");
+        ESP_LOGI(TAG, "Avanzando");
         ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
         bdc_motor_set_speed(Eje_cfg->Motor_L, 80);
         ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_R));
@@ -61,7 +77,8 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
         break;
 
     case estado_derecha:
-        printf("Giro derecha\n\r");
+
+        ESP_LOGI(TAG, "Giro Derecha");
         ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
         bdc_motor_set_speed(Eje_cfg->Motor_L, 60);
         ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_R));
@@ -70,7 +87,7 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
         break;
 
     case estado_izquierda:
-        printf("Giro izquierda\n\r");
+        ESP_LOGI(TAG, "Giro Izquierda");
         ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_L));
         bdc_motor_set_speed(Eje_cfg->Motor_L, 60);
         ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_R));
@@ -79,7 +96,8 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
         break;
 
     case estado_reversa:
-        printf("Retrocediendo\n\r");
+
+        ESP_LOGI(TAG, "Retrocediendo");
         ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_L));
         bdc_motor_set_speed(Eje_cfg->Motor_L, 80);
         ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_R));
@@ -88,6 +106,7 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
         break;
 
     case estado_detenido:
+        ESP_LOGI(TAG, "Detenido");
         ESP_ERROR_CHECK(bdc_motor_brake(Eje_cfg->Motor_L));
         ESP_ERROR_CHECK(bdc_motor_brake(Eje_cfg->Motor_R));
         break;
@@ -97,6 +116,6 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
         bdc_motor_set_speed(Eje_cfg->Motor_L, 80);
         ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
         bdc_motor_set_speed(Eje_cfg->Motor_R, 80);
-        printf("Avanzando por defecto\n\r");
+        ESP_LOGI(TAG, "Avanzando por defecto");
     }
 }
