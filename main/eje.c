@@ -70,52 +70,47 @@ void Eje_set(enum estado estado_robot, Eje_t Eje_cfg)
 
         // tengo que mandarle el puntero para que sepa que motor es
         ESP_LOGI(TAG, "Avanzando");
-        ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
-        bdc_motor_set_speed(Eje_cfg->Motor_L, 80);
-        ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_R));
-        bdc_motor_set_speed(Eje_cfg->Motor_R, 80);
+
+        Set_motor_forward(Eje_cfg->Motor_L, 80);
+        Set_motor_forward(Eje_cfg->Motor_R, 80);
         break;
 
     case estado_derecha:
 
         ESP_LOGI(TAG, "Giro Derecha");
-        ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
-        bdc_motor_set_speed(Eje_cfg->Motor_L, 60);
-        ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_R));
-        bdc_motor_set_speed(Eje_cfg->Motor_R, 60);
+
+        Set_motor_forward(Eje_cfg->Motor_L, 80);
+        Set_motor_backward(Eje_cfg->Motor_R, 60);
 
         break;
 
     case estado_izquierda:
         ESP_LOGI(TAG, "Giro Izquierda");
-        ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_L));
-        bdc_motor_set_speed(Eje_cfg->Motor_L, 60);
-        ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_R));
-        bdc_motor_set_speed(Eje_cfg->Motor_R, 60);
+
+        Set_motor_backward(Eje_cfg->Motor_L, 60);
+        Set_motor_forward(Eje_cfg->Motor_R, 80);
 
         break;
 
     case estado_reversa:
 
         ESP_LOGI(TAG, "Retrocediendo");
-        ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_L));
-        bdc_motor_set_speed(Eje_cfg->Motor_L, 80);
-        ESP_ERROR_CHECK(bdc_motor_reverse(Eje_cfg->Motor_R));
-        bdc_motor_set_speed(Eje_cfg->Motor_R, 80);
+
+        Set_motor_backward(Eje_cfg->Motor_L, 80);
+        Set_motor_backward(Eje_cfg->Motor_R, 80);
 
         break;
 
     case estado_detenido:
         ESP_LOGI(TAG, "Detenido");
-        ESP_ERROR_CHECK(bdc_motor_brake(Eje_cfg->Motor_L));
-        ESP_ERROR_CHECK(bdc_motor_brake(Eje_cfg->Motor_R));
+        Set_motor_brake(Eje_cfg->Motor_L);
+        Set_motor_brake(Eje_cfg->Motor_R);
+
         break;
 
     default:
-        ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
-        bdc_motor_set_speed(Eje_cfg->Motor_L, 80);
-        ESP_ERROR_CHECK(bdc_motor_forward(Eje_cfg->Motor_L));
-        bdc_motor_set_speed(Eje_cfg->Motor_R, 80);
+        Set_motor_forward(Eje_cfg->Motor_L, 80);
+        Set_motor_forward(Eje_cfg->Motor_R, 80);
         ESP_LOGI(TAG, "Avanzando por defecto");
     }
 }
