@@ -1,6 +1,7 @@
 #ifndef LECTURA
 #define LECTURA
 //creacion de los estados de la maquina de estados
+#include "driver/gpio.h"
 
 enum button_state      {
     button_state_up,

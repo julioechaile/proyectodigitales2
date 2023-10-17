@@ -8,9 +8,6 @@ Recibir un estado de la logica de negocio (setear_eje) y actuar sobre los motore
 
 necesito una estructura de entrada (puede ser un enum)
 
-!!falta encapsular las funciones de la API!!
-
-
 */
 #include <stdio.h>
 #include "estructura.h"
@@ -46,7 +43,7 @@ Eje_t Crear_eje(void)
     // Eje_config->Motor_L = Crear_motor(PIN_P_MOTA, PIN_N_MOTA);
 
     Motor_PL = Crear_motor(PIN_P_MOTA, PIN_N_MOTA);
-    ESP_LOGI(TAG, "llego aca?");
+    
 
     // creacion del motor_R
     // Eje_config->Motor_R = Crear_motor(PIN_P_MOTB, PIN_N_MOTB);

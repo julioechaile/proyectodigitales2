@@ -13,5 +13,6 @@
 #define sensor_izq GPIO_NUM_15
 #define sensor_der GPIO_NUM_2
 #define sensor_ret GPIO_NUM_0
+#define voltage_pin GPIO_NUM_32
 
 #endif // CONFIG_H

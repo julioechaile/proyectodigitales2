@@ -24,7 +24,7 @@ estructura de datos:
 #ifndef estructura_H
 #define estructura_H 
 #include <stdint.h>
-#include "driver/gpio.h"
+//#include "driver/gpio.h"
 #include "boton.h"
 #include "eje.h"
 //creacion de la maquina de estados del robot
