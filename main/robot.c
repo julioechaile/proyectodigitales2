@@ -15,7 +15,7 @@
 TaskHandle_t Handle = NULL;
 
 static Eje_t Eje_cfg;
-static int voltage;
+static float voltage;
 
 // inicializa todas las variables del robot
 void robot_init(robot_t *robot_i)
@@ -48,7 +48,7 @@ void robot_update(robot_t *robot_u)
     // leo el voltaje de batería
     voltage = get_voltage();
 
-    if (voltage > 2290)
+    if (voltage > 1.8)
     {
 
         switch (robot_u->status)

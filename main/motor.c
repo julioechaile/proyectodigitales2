@@ -30,7 +30,7 @@ static bdc_motor_config_t motor_config[motores_usados];
 static bdc_motor_mcpwm_config_t mcpwm_config[motores_usados];
 static int motores_configurados = 0;
 
-motor_t Crear_motor(u_int32_t pin_p, u_int32_t pin_n)
+motor_t Crear_motor(uint32_t pin_p, uint32_t pin_n)
 {
     if (motores_configurados < motores_usados)
     {
@@ -57,13 +57,13 @@ motor_t Crear_motor(u_int32_t pin_p, u_int32_t pin_n)
         return NULL;
 }
 
-void Set_motor_forward(motor_t motor, u_int32_t duty)
+void Set_motor_forward(motor_t motor, uint32_t duty)
 {
     ESP_ERROR_CHECK(bdc_motor_forward(motor));
     bdc_motor_set_speed(motor, duty);
 }
 
-void Set_motor_backward(motor_t motor, u_int32_t duty)
+void Set_motor_backward(motor_t motor, uint32_t duty)
 {
     ESP_ERROR_CHECK(bdc_motor_reverse(motor));
     bdc_motor_set_speed(motor, duty);

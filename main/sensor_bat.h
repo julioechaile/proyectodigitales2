@@ -2,6 +2,6 @@
 #define SENSOR_BAT
 
 void Set_Voltage_ADC(void);
-int get_voltage(void);
+float get_voltage(void);
 
 #endif
