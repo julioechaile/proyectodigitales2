@@ -15,7 +15,7 @@
 TaskHandle_t Handle = NULL;
 
 static Eje_t Eje_cfg;
-static float voltage;
+static int voltage;
 
 // inicializa todas las variables del robot
 void robot_init(robot_t *robot_i)
@@ -30,7 +30,7 @@ void robot_init(robot_t *robot_i)
     robot_i->sensor_retroceso = button_config(sensor_ret);
 
     // seteo el ADC1 para medir
-    Set_Voltage_ADC();
+    Set_ADC();
 
     // inicializo eje y devuelvo un puntero con el handle de los dos motores
     Eje_cfg = Crear_eje();
@@ -48,7 +48,7 @@ void robot_update(robot_t *robot_u)
     // leo el voltaje de batería
     voltage = get_voltage();
 
-    if (voltage > 1.8)
+    if (voltage > 1700)
     {
 
         switch (robot_u->status)
