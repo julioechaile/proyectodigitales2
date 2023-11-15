@@ -8,6 +8,7 @@
 #include "esp_adc/adc_oneshot.h"
 #include "esp_adc/adc_cali.h"
 #include "esp_adc/adc_cali_scheme.h"
+#include "sensor_bat.h"
 
 const static char *TAG = "BATERIA";
 
@@ -24,9 +25,9 @@ static int voltage;
 static bool example_adc_calibration_init(adc_unit_t unit, adc_channel_t channel, adc_atten_t atten, adc_cali_handle_t *out_handle);
 static void example_adc_calibration_deinit(adc_cali_handle_t handle);
 
-static bool do_calibration1_chan0;
 static adc_oneshot_unit_handle_t adc1_handle;
-static adc_cali_handle_t adc1_cali_chan0_handle;
+adc_cali_handle_t adc1_cali_chan0_handle;
+static bool do_calibration1_chan0;
 
 void Set_ADC(void)
 {
@@ -50,11 +51,12 @@ void Set_ADC(void)
     do_calibration1_chan0 = example_adc_calibration_init(ADC_UNIT_1, EXAMPLE_ADC1_CHAN0, EXAMPLE_ADC_ATTEN, &adc1_cali_chan0_handle);
 
     // Tear Down
+    /*
     ESP_ERROR_CHECK(adc_oneshot_del_unit(adc1_handle));
     if (do_calibration1_chan0)
     {
         example_adc_calibration_deinit(adc1_cali_chan0_handle);
-    }
+    }*/
 }
 
 int get_voltage(void)
